@@ -405,10 +405,12 @@ st.markdown(CARD_CSS, unsafe_allow_html=True)
 st.title("⚠️ Creative Risk Auditor")
 st.caption("※ 각 축 25점 만점(높을수록 안전). 최종 판정은 ‘최악 축(가장 낮은 점수)’ 기준으로 결정됨. (성과/효율 평가는 하지 않습니다)")
 
-model = st.selectbox("모델", ["gemini-2.5-flash", "gemini-2.5-flash-lite"], index=0)
-country = st.text_input("대상 국가/지역", placeholder="예: 대한민국, 미국-캘리포니아, 사우디아라비아 …")
-sector  = st.text_input("산업/카테고리(선택)", placeholder="예: 소비자가전, 식품/음료, 금융 등")
-copy_txt = st.text_area("카피라이트(캡션) 입력", placeholder="카피/캡션/해시태그/문구를 입력", height=140)
+# 고정 모델 적용 및 선택 옵션 제거
+model = "gemini-2.5-flash"
+
+country = st.text_input("대상 국가/지역", value="인도", placeholder="예: 대한민국, 미국-캘리포니아, 사우디아라비아 …")
+sector  = st.text_input("산업/카테고리(선택)", value="OLED TV", placeholder="예: 소비자가전, 식품/음료, 금융 등")
+copy_txt = st.text_area("카피라이트(캡션) 입력", value="OLED TV의 놀라운 색 재현율을 경험하세요!", placeholder="카피/캡션/해시태그/문구를 입력", height=140)
 imgs = st.file_uploader("Key Visual 업로드 (최대 3장)", type=["png","jpg","jpeg","webp"], accept_multiple_files=True)
 go = st.button("Risk 분석", type="primary")
 
