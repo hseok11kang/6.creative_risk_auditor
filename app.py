@@ -1,7 +1,7 @@
 # app.py — Creative Risk Auditor (v1.9)
 # 변경점 (v1.9):
 # - "Risk" 정의를 '논란/문제 소지'로 한정. 마케팅 성과/효율(CTR·전환·매출·브랜딩 등) 평가는 금지.
-# - LLM 프롬프트 강화: 효과성/효율성 언급 금지, 오직 Risk(논란/법/윤리/규정/차별/문화·종교 감수성/환경·오해소지)만.
+# - LLM 프롬프트 강화: 효과성/효율성 언급 금지, 오직 Risk(논란/법/윤리/규정/차별/문화·종교 감수성/환경/오해소지)만.
 # - 추가 안전장치: 모델 응답에서 성과/효율성 관련 문구를 자동 필터링(sanitize)하여 UI 표시.
 
 import os, re, json, base64, math, html
@@ -412,6 +412,37 @@ country = st.text_input("대상 국가/지역", value="인도", placeholder="예
 sector  = st.text_input("산업/카테고리(선택)", value="OLED TV", placeholder="예: 소비자가전, 식품/음료, 금융 등")
 copy_txt = st.text_area("카피라이트(캡션) 입력", value="OLED TV의 놀라운 색 재현율을 경험하세요!", placeholder="카피/캡션/해시태그/문구를 입력", height=140)
 imgs = st.file_uploader("Key Visual 업로드 (최대 3장)", type=["png","jpg","jpeg","webp"], accept_multiple_files=True)
+
+# ---------- [추가] sample01.png 자동 첨부 + 썸네일 미리보기 (여기만 추가했습니다) ----------
+try:
+    from io import BytesIO
+    default_imgs = []
+    if os.path.exists("sample01.png"):
+        with open("sample01.png", "rb") as _f:
+            _b = _f.read()
+        _bio = BytesIO(_b)
+        _bio.name = "sample01.png"
+        _bio.type = "image/png"
+        default_imgs = [_bio]
+    # 업로드한 이미지 + 기본 이미지 병합
+    imgs = list(imgs) + default_imgs if imgs else default_imgs
+    # 미리보기 썸네일
+    if imgs:
+        st.caption("미리보기")
+        _cols = st.columns(min(5, len(imgs)))
+        for i, _up in enumerate(imgs):
+            try:
+                _up.seek(0)
+                _data = _up.read()
+                _up.seek(0)
+                with _cols[i % len(_cols)]:
+                    st.image(_data, caption=getattr(_up, "name", "image"), width=120)
+            except Exception:
+                pass
+except Exception:
+    pass
+# -------------------------------------------------------------------------------
+
 go = st.button("Risk 분석", type="primary")
 
 def legend_html():
